@@ -1,0 +1,12 @@
+# Google Apps Script files (tidak perlu di-deploy ke Vercel)
+Code.gs
+appsscript.json
+Index.html
+
+# Documentation (opsional, bisa di-deploy atau tidak)
+doc/
+
+# Old assets folder (sudah dipindah ke public)
+img/
+style.css
+
