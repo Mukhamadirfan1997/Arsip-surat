@@ -2,12 +2,8 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/img/(.*)",
-      "destination": "/public/img/$1"
-    },
-    {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/Index.html"
     }
   ]
 }
