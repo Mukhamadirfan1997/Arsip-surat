@@ -518,46 +518,76 @@
   </div>
 
   <script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxzDZMAeCdpXJjBmlOQw2jR8KOPY7KTXOW4dllmE8_tsG0nCxFPDUv3g-ik2QlM6vatbw/exec";
 
-const GOOGLE_APPS_SCRIPT_URL =
-'https://script.google.com/macros/s/AKfycbwUjpV_zjl7JwPXfhFD1lbUOr0qlP6XoeRRKaOGVNcDi5eibfOxzcW8u7AVaFDufSzkuA/exec';
+document.addEventListener("DOMContentLoaded", loadData);
 
-async function loadData() {
-  console.log('Memuat data...');
+function loadData() {
+  fetch(`${API_URL}?action=getAllData`)
+    .then(res => res.json())
+    .then(res => {
+      if (!res.success) {
+        alert("Gagal mengambil data");
+        return;
+      }
+      renderTable(res.data);
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Koneksi ke server gagal");
+    });
+}
+function renderTable(data) {
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
 
-  // UI state
-  document.getElementById('loadingState').style.display = 'block';
-  document.getElementById('tableContainer').style.display = 'none';
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('statsContainer').style.display = 'none';
-  document.getElementById('notification').style.display = 'none';
-
-  const refreshBtn = document.getElementById('refreshBtn');
-  refreshBtn.disabled = true;
-  document.getElementById('refreshIcon').textContent = '⏳';
-
-  try {
-    const response = await fetch(GOOGLE_APPS_SCRIPT_URL);
-    const result = await response.json();
-
-    console.log('DATA DARI GAS:', result);
-
-    handleDataResponse(result);
-
-  } catch (error) {
-    console.error('Fetch error:', error);
-    showNotification(
-      'Gagal mengambil data dari server. Pastikan Google Apps Script Web App aktif dan bisa diakses.',
-      'error',
-      true
-    );
-    document.getElementById('loadingState').style.display = 'none';
-  } finally {
-    refreshBtn.disabled = false;
-    document.getElementById('refreshIcon').textContent = '🔄';
+  if (data.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="8" style="text-align:center;">Belum ada data</td>
+      </tr>`;
+    return;
   }
+
+  data.forEach((row, i) => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${row.jenisSurat}</td>
+        <td>${row.nomorSurat}</td>
+        <td>${row.tanggalSurat}</td>
+        <td>${row.asalTujuan}</td>
+        <td>${row.perihal}</td>
+        <td>
+          ${row.fileUrl ? `<a href="${row.fileUrl}" target="_blank">📄</a>` : '-'}
+        </td>
+        <td>
+          <button onclick="editData(${row.rowIndex})">✏️</button>
+          <button onclick="hapusData(${row.rowIndex})">🗑️</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+function hapusData(rowIndex) {
+  if (!confirm("Yakin ingin menghapus data ini?")) return;
+
+  fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "delete",
+      rowIndex: rowIndex
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    alert(res.message);
+    loadData();
+  });
 }
 </script>
+
 
 </body>
 
