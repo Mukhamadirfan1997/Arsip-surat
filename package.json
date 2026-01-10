@@ -3,11 +3,7 @@
   "version": "1.0.0",
   "description": "Aplikasi Pencatatan Arsip Surat Masuk dan Keluar - SDN TOYANING 1 REJOSO",
   "main": "index.html",
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'No build step required for static site'",
-    "deploy": "vercel --prod"
-  },
+  "scripts": {},
   "keywords": [
     "surat",
     "arsip",
