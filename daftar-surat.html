@@ -516,69 +516,61 @@
       <p>&copy; 2024 Aplikasi Pencatatan Arsip Surat</p>
     </footer>
   </div>
-
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js">
   <script>
-const GOOGLE_APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbyRmjomUc5XjLB5iH0-ChK-kZH6Vh7mxqxUWoMTafygPgk7H3F_t6tvyg0-aRTNoDfaJA/exec";
+/* ================== KONFIGURASI ================== */
+const CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRdWhrTODAyQieIvakOP15Tf9QohG60jrv2s5QER-crFus5cXJy4IixoOW7iDUvsZQ_eIDc03OuaIWY/pub?output=csv";
 
 let allData = [];
 let filteredData = [];
 
-/* ================== LOAD DATA ================== */
+/* ================== LOAD DATA CSV ================== */
 function loadData() {
   showLoading(true);
 
-  const callbackName = "cb_" + Date.now();
+  fetch(CSV_URL)
+    .then(res => res.text())
+    .then(csvText => {
+      Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function (result) {
+          if (!result.data || result.data.length === 0) {
+            showEmpty("Belum ada data surat.");
+            return;
+          }
 
-  window[callbackName] = function (response) {
-    delete window[callbackName];
-    document.body.removeChild(script);
-    handleResponse(response);
-  };
+          allData = result.data.map(row => ({
+            jenisSurat: row.jenisSurat || row["Jenis Surat"],
+            nomorSurat: row.nomorSurat || row["Nomor Surat"],
+            tanggalSurat: row.tanggalSurat || row["Tanggal Surat"],
+            tanggalTerimaKirim: row.tanggalTerimaKirim || row["Tanggal Terima/Kirim"],
+            asalTujuan: row.asalTujuan || row["Asal/Tujuan"],
+            perihal: row.perihal || row["Perihal"],
+            fileUrl: row.fileUrl || row["File"],
+            timestamp: row.timestamp || row["Timestamp"] || ""
+          }));
 
-  const script = document.createElement("script");
-  script.src =
-    GOOGLE_APPS_SCRIPT_URL +
-    "?action=getAllData&callback=" +
-    callbackName;
+          // Urutkan terbaru
+          allData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-  script.onerror = () => {
-    showLoading(false);
-    showNotification("Gagal memuat data (JSONP error).", "error", true);
-  };
-
-  document.body.appendChild(script);
-}
-
-/* ================== HANDLE RESPONSE ================== */
-function handleResponse(result) {
-  showLoading(false);
-
-  if (!result || !result.success) {
-    showNotification(
-      result?.message || "Gagal mengambil data",
-      "error",
-      true
-    );
-    document.getElementById("emptyState").style.display = "block";
-    return;
-  }
-
-  allData = result.data || [];
-
-  if (allData.length === 0) {
-    showNotification("Belum ada data surat.", "info");
-    document.getElementById("emptyState").style.display = "block";
-    return;
-  }
-
-  allData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-  applyFilter();
-  updateStats();
-  renderTable();
-
-  showNotification(`Berhasil memuat ${allData.length} surat.`, "success");
+          applyFilter();
+          updateStats();
+          renderTable();
+          showLoading(false);
+          showNotification(`Berhasil memuat ${allData.length} surat.`, "success");
+        },
+        error: function () {
+          showLoading(false);
+          showNotification("Gagal membaca data CSV.", "error", true);
+        }
+      });
+    })
+    .catch(() => {
+      showLoading(false);
+      showNotification("Gagal mengambil file CSV.", "error", true);
+    });
 }
 
 /* ================== FILTER ================== */
@@ -659,6 +651,12 @@ function showNotification(msg, type, persistent = false) {
   }
 }
 
+function showEmpty(msg) {
+  showLoading(false);
+  showNotification(msg, "info");
+  document.getElementById("emptyState").style.display = "block";
+}
+
 /* ================== EVENTS ================== */
 document.getElementById("filterJenis").addEventListener("change", () => {
   applyFilter();
@@ -667,6 +665,10 @@ document.getElementById("filterJenis").addEventListener("change", () => {
 
 document.addEventListener("DOMContentLoaded", loadData);
 </script>
+
+</script>
+
+  
 </body>
 
 </html>
