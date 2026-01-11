@@ -366,10 +366,75 @@
       -webkit-appearance: none;
       -moz-appearance: none;
     }
+
+    /* Access modal for simple passcode check */
+    .access-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 99999;
+    }
+
+    .access-modal.show {
+      display: flex;
+    }
+
+    .access-box {
+      background: white;
+      padding: 22px;
+      border-radius: 10px;
+      width: 360px;
+      max-width: 92%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .access-box h2 {
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .access-box p {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .access-box input[type="password"], .access-box input[type="text"] {
+      padding: 10px;
+      width: 100%;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .access-box .error-message {
+      display: none;
+      margin-top: 8px;
+      color: #ea4335;
+      font-weight: 600;
+    }
+
   </style>
 </head>
 
 <body>
+  <div id="accessModal" class="access-modal" aria-hidden="true" role="dialog">
+    <div class="access-box" role="document">
+      <h2>Masukkan Kode Akses</h2>
+      <p>Silakan masukkan kode akses untuk membuka halaman input.</p>
+      <input id="accessCodeInput" type="password" placeholder="Kode akses" aria-label="Kode akses" />
+      <div id="accessError" class="error-message">Kode salah. Silakan coba lagi.</div>
+      <div style="margin-top:14px;">
+        <button id="accessSubmit" class="btn-submit">Masuk</button>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <header>
       <div class="header-content">
@@ -1126,6 +1191,56 @@
         tanggalLabel.textContent = 'Tanggal Terima/Kirim';
       }
     });
+
+    // ================= ACCESS MODAL (simple client-side protection) =================
+    (function () {
+      const ACCESS_CODE = '20519260'; // NOTE: client-side only (visible in source)
+      const modal = document.getElementById('accessModal');
+      const input = document.getElementById('accessCodeInput');
+      const submitBtn = document.getElementById('accessSubmit');
+      const err = document.getElementById('accessError');
+
+      function showModal(show) {
+        if (!modal) return;
+        modal.setAttribute('aria-hidden', show ? 'false' : 'true');
+        if (show) {
+          modal.classList.add('show');
+          input && input.focus();
+          // prevent scrolling behind modal
+          document.body.style.overflow = 'hidden';
+        } else {
+          modal.classList.remove('show');
+          document.body.style.overflow = '';
+        }
+      }
+
+      function unlock() {
+        // Do not persist unlock across page reloads — modal will reappear on refresh
+        err.style.display = 'none';
+        showModal(false);
+      }
+
+      function trySubmit() {
+        const val = (input && input.value || '').trim();
+        if (val === ACCESS_CODE) {
+          unlock();
+        } else {
+          if (err) {
+            err.style.display = 'block';
+          }
+          input.value = '';
+          input.focus();
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        // Always show modal on load (including after refresh)
+        showModal(true);
+
+        if (submitBtn) submitBtn.addEventListener('click', trySubmit);
+        if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') trySubmit(); });
+      });
+    })();
   </script>
 </body>
 
