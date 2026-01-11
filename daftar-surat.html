@@ -243,21 +243,28 @@
 
     .badge {
       display: inline-block;
-      padding: 4px 12px;
-      border-radius: 12px;
+      padding: 6px 14px;
+      border-radius: 14px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.2s ease;
     }
 
     .badge.masuk {
-      background: #d4edda;
-      color: #155724;
+      background: linear-gradient(90deg, #2ecc71, #28a745);
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(40,167,69,0.18);
     }
 
     .badge.keluar {
-      background: #cfe2ff;
-      color: #084298;
+      background: linear-gradient(90deg, #5dade2, #2e86de);
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(46,134,222,0.16);
+    }
+
+    .badge:hover {
+      transform: translateY(-2px) scale(1.02);
     }
 
     .file-link {
@@ -310,6 +317,39 @@
       border-radius: 50%;
       border-top-color: #4285f4;
       animation: spin 0.8s linear infinite;
+    }
+
+    /* Full page overlay used for transitions and page loads */
+    .page-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(5,10,20,0.6);
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 260ms ease;
+    }
+
+    .page-overlay.overlay-show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .page-overlay .overlay-content {
+      text-align: center;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     @keyframes spin {
@@ -446,7 +486,7 @@
           <option value="Masuk">Surat Masuk</option>
           <option value="Keluar">Surat Keluar</option>
         </select>
-        <button id="refreshBtn" class="btn-refresh" onclick="loadData()">
+        <button id="refreshBtn" class="btn-refresh">
           <span id="refreshIcon">🔄</span>
           <span id="refreshText">Refresh</span>
         </button>
@@ -507,7 +547,7 @@
             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
         <h3>Belum Ada Data</h3>
-        <p>Belum ada surat yang dicatat. <a href="Index.html" style="color: #4285f4;">Klik di sini untuk menambahkan
+        <p>Belum ada surat yang dicatat. <a href="index.html" style="color: #4285f4;">Klik di sini untuk menambahkan
             surat baru</a>.</p>
       </div>
     </main>
@@ -516,8 +556,8 @@
       <p>&copy; 2024 Aplikasi Pencatatan Arsip Surat</p>
     </footer>
   </div>
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js">
-  <script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
 /* ================== KONFIGURASI ================== */
 const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRdWhrTODAyQieIvakOP15Tf9QohG60jrv2s5QER-crFus5cXJy4IixoOW7iDUvsZQ_eIDc03OuaIWY/pub?output=csv";
@@ -552,8 +592,8 @@ function loadData() {
             timestamp: row.timestamp || row["Timestamp"] || ""
           }));
 
-          // Urutkan terbaru
-          allData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+          // Urutkan terbaru (tambah fallback jika timestamp kosong)
+          allData.sort((a, b) => (new Date(b.timestamp) - new Date(a.timestamp)) || 0);
 
           applyFilter();
           updateStats();
@@ -607,37 +647,89 @@ function renderTable() {
   document.getElementById("emptyState").style.display = "none";
 
   filteredData.forEach((item, i) => {
-    const badge =
-      item.jenisSurat === "Masuk"
-        ? '<span class="badge masuk">Masuk</span>'
-        : '<span class="badge keluar">Keluar</span>';
+    // Buat baris tabel dengan DOM API untuk mencegah XSS dan meningkatkan kinerja
+    const tr = document.createElement('tr');
 
-    const file = item.fileUrl
-      ? `<a href="${item.fileUrl}" target="_blank" class="file-link">📎 File</a>`
-      : "-";
+    const tdNo = document.createElement('td');
+    tdNo.textContent = i + 1;
 
-    tbody.innerHTML += `
-      <tr>
-        <td>${i + 1}</td>
-        <td>${badge}</td>
-        <td><strong>${item.nomorSurat || "-"}</strong></td>
-        <td>${item.tanggalSurat || "-"}</td>
-        <td>${item.tanggalTerimaKirim || "-"}</td>
-        <td class="text-truncate">${item.asalTujuan || "-"}</td>
-        <td class="text-truncate">${item.perihal || "-"}</td>
-        <td>${file}</td>
-      </tr>
-    `;
+    const tdJenis = document.createElement('td');
+    tdJenis.innerHTML = item.jenisSurat === "Masuk"
+      ? '<span class="badge masuk">Masuk</span>'
+      : '<span class="badge keluar">Keluar</span>';
+
+    const tdNomor = document.createElement('td');
+    const strong = document.createElement('strong');
+    strong.textContent = item.nomorSurat || "-";
+    tdNomor.appendChild(strong);
+
+    const tdTanggalSurat = document.createElement('td');
+    tdTanggalSurat.textContent = item.tanggalSurat || "-";
+
+    const tdTanggalTerima = document.createElement('td');
+    tdTanggalTerima.textContent = item.tanggalTerimaKirim || "-";
+
+    const tdAsal = document.createElement('td');
+    tdAsal.className = 'text-truncate';
+    tdAsal.textContent = item.asalTujuan || "-";
+
+    const tdPerihal = document.createElement('td');
+    tdPerihal.className = 'text-truncate';
+    tdPerihal.textContent = item.perihal || "-";
+
+    const tdFile = document.createElement('td');
+    if (item.fileUrl) {
+      const a = document.createElement('a');
+      a.href = item.fileUrl;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.className = 'file-link';
+      a.textContent = '📎 File';
+      tdFile.appendChild(a);
+    } else {
+      tdFile.textContent = '-';
+    }
+
+    tr.appendChild(tdNo);
+    tr.appendChild(tdJenis);
+    tr.appendChild(tdNomor);
+    tr.appendChild(tdTanggalSurat);
+    tr.appendChild(tdTanggalTerima);
+    tr.appendChild(tdAsal);
+    tr.appendChild(tdPerihal);
+    tr.appendChild(tdFile);
+
+    tbody.appendChild(tr);
   });
 }
 
 /* ================== UI ================== */
+function showPageOverlay(show) {
+  const overlay = document.getElementById('pageOverlay');
+  if (!overlay) return;
+  overlay.style.display = show ? 'flex' : 'none';
+  if (show) {
+    // force reflow for transition
+    void overlay.offsetWidth;
+    overlay.classList.add('overlay-show');
+  } else {
+    overlay.classList.remove('overlay-show');
+    // hide after transition
+    setTimeout(() => {
+      if (!overlay.classList.contains('overlay-show')) overlay.style.display = 'none';
+    }, 300);
+  }
+}
+
 function showLoading(isLoading) {
-  document.getElementById("loadingState").style.display =
-    isLoading ? "block" : "none";
-  document.getElementById("refreshBtn").disabled = isLoading;
-  document.getElementById("refreshIcon").textContent =
-    isLoading ? "⏳" : "🔄";
+  const loadingEl = document.getElementById("loadingState");
+  if (loadingEl) loadingEl.style.display = isLoading ? "block" : "none";
+  const refreshBtn = document.getElementById("refreshBtn");
+  if (refreshBtn) refreshBtn.disabled = isLoading;
+  const refreshIcon = document.getElementById("refreshIcon");
+  if (refreshIcon) refreshIcon.textContent = isLoading ? "⏳" : "🔄";
+  // Show full-page overlay during loading for better UX
+  showPageOverlay(isLoading);
 }
 
 function showNotification(msg, type, persistent = false) {
@@ -658,17 +750,43 @@ function showEmpty(msg) {
 }
 
 /* ================== EVENTS ================== */
-document.getElementById("filterJenis").addEventListener("change", () => {
-  applyFilter();
-  renderTable();
+// Attach safe event listeners after DOM ready
+document.addEventListener("DOMContentLoaded", () => {
+  const filter = document.getElementById("filterJenis");
+  if (filter) {
+    filter.addEventListener("change", () => {
+      applyFilter();
+      renderTable();
+    });
+  }
+
+  const refreshBtn = document.getElementById('refreshBtn');
+  if (refreshBtn) refreshBtn.addEventListener('click', loadData);
+
+  // Attach nice navigation transition for same-window links
+  document.querySelectorAll('a').forEach(a => {
+    const href = a.getAttribute('href');
+    if (!href) return;
+    // skip anchors that open in new tabs or are hashes/mailto/tel/javascript
+    if (a.target === '_blank' || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return;
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      showPageOverlay(true);
+      setTimeout(() => { window.location.href = href; }, 350);
+    });
+  });
+
+  loadData();
 });
-
-document.addEventListener("DOMContentLoaded", loadData);
 </script>
 
-</script>
+  <div id="pageOverlay" class="page-overlay" style="display:none;">
+    <div class="overlay-content">
+      <div class="spinner"></div>
+      <p style="margin-top: 6px; color: #fff; font-weight:600;">Memuat...</p>
+    </div>
+  </div>
 
-  
 </body>
 
 </html>
