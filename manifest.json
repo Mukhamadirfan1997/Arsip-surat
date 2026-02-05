@@ -1,0 +1,43 @@
+{
+    "name": "Aplikasi Arsip Surat SDN Toyaning 1 Rejoso",
+    "short_name": "Arsip Surat",
+    "description": "Aplikasi Pencatatan Arsip Surat Masuk dan Keluar SDN Toyaning 1 Rejoso",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4285f4",
+    "orientation": "portrait",
+    "icons": [
+      {
+        "src": "Logosekolah.png",
+        "sizes": "72x72",
+        "type": "image/png"
+      },
+      {
+        "src": "Logosekolah.png",
+        "sizes": "96x96",
+        "type": "image/png"
+      },
+      {
+        "src": "Logosekolah.png",
+        "sizes": "128x128",
+        "type": "image/png"
+      },
+      {
+        "src": "Logosekolah.png",
+        "sizes": "144x144",
+        "type": "image/png"
+      },
+      {
+        "src": "Logosekolah.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "Logosekolah.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  
