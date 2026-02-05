@@ -1,1029 +1,1118 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#4285f4">
-  <title>Aplikasi Pencatatan Arsip Surat</title>
-  <style>
-    /* Reset dan Base Styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 20px;
-      color: #333;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-      overflow: hidden;
-    }
-
-    /* Header Styles */
-    header {
-      background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
-      color: white;
-      padding: 30px;
-      text-align: center;
-    }
-
-    .header-content {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .logo-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .logo-container img {
-      max-width: 80px;
-      max-height: 80px;
-      object-fit: contain;
-      background: white;
-      padding: 8px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .header-text {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .institution-name {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    header h1 {
-      font-size: 24px;
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      opacity: 0.9;
-    }
-
-    /* Navigation Styles */
-    .nav-actions {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px 40px;
-      background: #f8f9fa;
-      border-bottom: 1px solid #e0e0e0;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    .nav-links a {
-      padding: 10px 20px;
-      background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      display: inline-block;
-      font-size: 14px;
-    }
-
-    .nav-links a:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(66, 133, 244, 0.4);
-    }
-
-    /* Main Content */
-    main {
-      padding: 40px;
-    }
-
-    /* Form Styles */
-    .form-group {
-      margin-bottom: 24px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: #555;
-      font-size: 14px;
-    }
-
-    label.required::after {
-      content: ' *';
-      color: #ea4335;
-    }
-
-    input[type="text"],
-    input[type="date"],
-    input[type="file"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid #e0e0e0;
-      border-radius: 6px;
-      font-size: 14px;
-      font-family: inherit;
-      transition: border-color 0.3s ease;
-    }
-
-    input[type="text"]:focus,
-    input[type="date"]:focus,
-    input[type="file"]:focus,
-    select:focus,
-    textarea:focus {
-      outline: none;
-      border-color: #4285f4;
-      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
-    }
-
-    input[type="text"]:invalid,
-    input[type="date"]:invalid,
-    select:invalid {
-      border-color: #ea4335;
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 100px;
-    }
-
-    .help-text {
-      display: block;
-      margin-top: 6px;
-      font-size: 12px;
-      color: #888;
-      font-style: italic;
-    }
-
-    .error-message {
-      display: block;
-      margin-top: 6px;
-      font-size: 12px;
-      color: #ea4335;
-      font-weight: 500;
-    }
-
-    /* Button Styles */
-    .form-group:last-of-type {
-      display: flex;
-      gap: 12px;
-      margin-top: 32px;
-    }
-
-    button {
-      padding: 14px 28px;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: inherit;
-      position: relative;
-    }
-
-    .btn-submit {
-      background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
-      color: white;
-      flex: 1;
-    }
-
-    .btn-submit:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(66, 133, 244, 0.4);
-    }
-
-    .btn-submit:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    .btn-reset {
-      background: #f1f3f4;
-      color: #555;
-      border: 2px solid #e0e0e0;
-    }
-
-    .btn-reset:hover {
-      background: #e8eaed;
-      border-color: #dadce0;
-    }
-
-    /* Loader Animation */
-    .loader {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Notification Styles */
-    .notification {
-      margin-top: 20px;
-      padding: 16px;
-      border-radius: 6px;
-      font-weight: 500;
-      animation: slideDown 0.3s ease;
-    }
-
-    .notification.success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-
-    .notification.error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#4285f4" />
+    <title>Aplikasi Pencatatan Arsip Surat</title>
+    <style>
+      /* Reset dan Base Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Footer Styles */
-    footer {
-      background: #f8f9fa;
-      padding: 20px;
-      text-align: center;
-      color: #888;
-      font-size: 12px;
-      border-top: 1px solid #e0e0e0;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 600px) {
       body {
-        padding: 10px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #333;
       }
 
-      main {
-        padding: 24px;
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
       }
 
-      .header-content {
-        flex-direction: column;
-        gap: 15px;
-      }
-
-      .logo-container img {
-        max-width: 60px;
-        max-height: 60px;
-      }
-
-      .institution-name {
-        font-size: 16px;
-      }
-
-      header h1 {
-        font-size: 20px;
-      }
-
-      .nav-actions {
-        padding: 15px 20px;
-      }
-
-      .nav-links {
-        width: 100%;
-      }
-
-      .nav-links a {
-        width: 100%;
+      /* Header Styles */
+      header {
+        background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+        color: white;
+        padding: 30px;
         text-align: center;
       }
 
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo-container img {
+        max-width: 80px;
+        max-height: 80px;
+        object-fit: contain;
+        background: white;
+        padding: 8px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .header-text {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .institution-name {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      header h1 {
+        font-size: 24px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      /* Navigation Styles */
+      .nav-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 40px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e0e0e0;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a {
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-block;
+        font-size: 14px;
+      }
+
+      .nav-links a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(66, 133, 244, 0.4);
+      }
+
+      /* Main Content */
+      main {
+        padding: 40px;
+      }
+
+      /* Form Styles */
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+        font-size: 14px;
+      }
+
+      label.required::after {
+        content: " *";
+        color: #ea4335;
+      }
+
+      input[type="text"],
+      input[type="date"],
+      input[type="file"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+        transition: border-color 0.3s ease;
+      }
+
+      input[type="text"]:focus,
+      input[type="date"]:focus,
+      input[type="file"]:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #4285f4;
+        box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+      }
+
+      input[type="text"]:invalid,
+      input[type="date"]:invalid,
+      select:invalid {
+        border-color: #ea4335;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .help-text {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        color: #888;
+        font-style: italic;
+      }
+
+      .error-message {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        color: #ea4335;
+        font-weight: 500;
+      }
+
+      /* Button Styles */
       .form-group:last-of-type {
-        flex-direction: column;
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
       }
 
       button {
+        padding: 14px 28px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        position: relative;
+      }
+
+      .btn-submit {
+        background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+        color: white;
+        flex: 1;
+      }
+
+      .btn-submit:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(66, 133, 244, 0.4);
+      }
+
+      .btn-submit:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      .btn-submit:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .btn-reset {
+        background: #f1f3f4;
+        color: #555;
+        border: 2px solid #e0e0e0;
+      }
+
+      .btn-reset:hover {
+        background: #e8eaed;
+        border-color: #dadce0;
+      }
+
+      /* Loader Animation */
+      .loader {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Notification Styles */
+      .notification {
+        margin-top: 20px;
+        padding: 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        animation: slideDown 0.3s ease;
+      }
+
+      .notification.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .notification.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Footer Styles */
+      footer {
+        background: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        color: #888;
+        font-size: 12px;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+
+        main {
+          padding: 24px;
+        }
+
+        .header-content {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .logo-container img {
+          max-width: 60px;
+          max-height: 60px;
+        }
+
+        .institution-name {
+          font-size: 16px;
+        }
+
+        header h1 {
+          font-size: 20px;
+        }
+
+        .nav-actions {
+          padding: 15px 20px;
+        }
+
+        .nav-links {
+          width: 100%;
+        }
+
+        .nav-links a {
+          width: 100%;
+          text-align: center;
+        }
+
+        .form-group:last-of-type {
+          flex-direction: column;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
+
+      /* Select Dropdown Styling */
+      select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 12px;
+        padding-right: 36px;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+      }
+
+      /* Access modal for simple passcode check */
+      .access-modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 99999;
+      }
+
+      .access-modal.show {
+        display: flex;
+      }
+
+      .access-box {
+        background: white;
+        padding: 22px;
+        border-radius: 10px;
+        width: 360px;
+        max-width: 92%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      }
+
+      .access-box h2 {
+        font-size: 18px;
+        margin-bottom: 6px;
+      }
+
+      .access-box p {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 10px;
+      }
+
+      .access-box input[type="password"],
+      .access-box input[type="text"] {
+        padding: 10px;
         width: 100%;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box;
       }
-    }
 
-    /* Select Dropdown Styling */
-    select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      background-size: 12px;
-      padding-right: 36px;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-    }
+      .access-box .error-message {
+        display: none;
+        margin-top: 8px;
+        color: #ea4335;
+        font-weight: 600;
+      }
 
-    /* Access modal for simple passcode check */
-    .access-modal {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 99999;
-    }
+      /* Info Kode Surat */
+      .info-box {
+        margin-bottom: 24px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #f8f9fa;
+      }
 
-    .access-modal.show {
-      display: flex;
-    }
+      .info-toggle {
+        width: 100%;
+        background: #4285f4;
+        color: white;
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-    .access-box {
-      background: white;
-      padding: 22px;
-      border-radius: 10px;
-      width: 360px;
-      max-width: 92%;
-      text-align: center;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-    }
+      .info-toggle:hover {
+        background: #3367d6;
+      }
 
-    .access-box h2 {
-      font-size: 18px;
-      margin-bottom: 6px;
-    }
+      .info-content {
+        display: none;
+        padding: 16px;
+        font-size: 13px;
+        color: #444;
+      }
 
-    .access-box p {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 10px;
-    }
+      .info-content h4 {
+        margin-top: 12px;
+        margin-bottom: 6px;
+        color: #333;
+      }
 
-    .access-box input[type="password"], .access-box input[type="text"] {
-      padding: 10px;
-      width: 100%;
-      border: 2px solid #e0e0e0;
-      border-radius: 6px;
-      font-size: 14px;
-      box-sizing: border-box;
-    }
+      .info-content ul {
+        padding-left: 18px;
+        margin-bottom: 10px;
+      }
 
-    .access-box .error-message {
-      display: none;
-      margin-top: 8px;
-      color: #ea4335;
-      font-weight: 600;
-    }
-    
-    /* Info Kode Surat */
-.info-box {
-  margin-bottom: 24px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f8f9fa;
-}
+      .info-content li {
+        margin-bottom: 4px;
+      }
 
-.info-toggle {
-  width: 100%;
-  background: #4285f4;
-  color: white;
-  padding: 12px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+      .example-box {
+        background: white;
+        border: 1px dashed #bbb;
+        padding: 10px;
+        border-radius: 6px;
+      }
 
-.info-toggle:hover {
-  background: #3367d6;
-}
+      .example-box code {
+        display: block;
+        background: #f1f3f4;
+        padding: 6px;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
 
-.info-content {
-  display: none;
-  padding: 16px;
-  font-size: 13px;
-  color: #444;
-}
-
-.info-content h4 {
-  margin-top: 12px;
-  margin-bottom: 6px;
-  color: #333;
-}
-
-.info-content ul {
-  padding-left: 18px;
-  margin-bottom: 10px;
-}
-
-.info-content li {
-  margin-bottom: 4px;
-}
-
-.example-box {
-  background: white;
-  border: 1px dashed #bbb;
-  padding: 10px;
-  border-radius: 6px;
-}
-
-.example-box code {
-  display: block;
-  background: #f1f3f4;
-  padding: 6px;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-
-  </style>
-</head>
-
-<body>
-  <div id="accessModal" class="access-modal" aria-hidden="true" role="dialog">
-    <div class="access-box" role="document">
-      <h2>Masukkan Kode Akses</h2>
-      <p>Silakan masukkan kode akses untuk membuka halaman input.</p>
-      <input id="accessCodeInput" type="password" placeholder="Kode akses" aria-label="Kode akses" />
-      <div id="accessError" class="error-message">Kode salah. Silakan coba lagi.</div>
-      <div style="margin-top:14px;">
-        <button id="accessSubmit" class="btn-submit">Masuk</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-    <header>
-      <div class="header-content">
-        <div class="logo-container">
-          <img src="Logosekolah.png" alt="Logo SDN TOYANING 1 REJOSO" />
+  <body>
+    <div id="accessModal" class="access-modal" aria-hidden="true" role="dialog">
+      <div class="access-box" role="document">
+        <h2>Masukkan Kode Akses</h2>
+        <p>Silakan masukkan kode akses untuk membuka halaman input.</p>
+        <input
+          id="accessCodeInput"
+          type="password"
+          placeholder="Kode akses"
+          aria-label="Kode akses"
+        />
+        <div id="accessError" class="error-message">
+          Kode salah. Silakan coba lagi.
         </div>
-        <div class="header-text">
-          <div class="institution-name">SDN TOYANING 1 REJOSO</div>
-          <h1>📋 Aplikasi Pencatatan Arsip Surat</h1>
-          <p class="subtitle">Sistem Pencatatan Surat Masuk dan Surat Keluar</p>
+        <div style="margin-top: 14px">
+          <button id="accessSubmit" class="btn-submit">Masuk</button>
         </div>
-      </div>
-    </header>
-
-    <div class="nav-actions">
-      <div class="nav-links">
-        <a href="daftar-surat.html">📋 Lihat Daftar Surat</a>
       </div>
     </div>
 
-    <main>
-      <!-- Informasi Kode Surat -->
-<div class="info-box">
-  <button type="button" class="info-toggle" onclick="toggleInfo()">
-    📘 Informasi Kode Surat
-    <span id="infoArrow">▼</span>
-  </button>
-
-  <div id="infoContent" class="info-content">
-    <h4>Kode Utama (Administrasi Pendidikan)</h4>
-    <ul>
-      <li><strong>420</strong> : Pendidikan secara umum</li>
-      <li><strong>421</strong> : Sekolah / Pendidikan</li>
-      <li><strong>421.2</strong> : Pendidikan Dasar</li>
-      <li><strong>421.3</strong> : Pendidikan Menengah</li>
-      <li><strong>421.5</strong> : Sekolah Kejuruan</li>
-      <li><strong>421.6</strong> : Kegiatan Sekolah</li>
-      <li><strong>422</strong> : Administrasi Sekolah / SPP</li>
-    </ul>
-
-    <h4>Kode Jenis Surat</h4>
-    <ul>
-      <li><strong>01</strong> : Surat Keputusan (SK)</li>
-      <li><strong>02</strong> : Surat Undangan (SU)</li>
-      <li><strong>03</strong> : Surat Permohonan (SPm)</li>
-      <li><strong>04</strong> : Surat Pemberitahuan (SPb)</li>
-      <li><strong>05</strong> : Surat Peminjaman (SPp)</li>
-      <li><strong>08</strong> : Surat Tugas (ST)</li>
-    </ul>
-
-    <h4>Contoh Struktur Nomor Surat</h4>
-    <div class="example-box">
-      <code>421.3 / 005 / 424.053 / 2026</code>
-      <p>
-        <strong>421.3</strong> = Kode Surat<br>
-        <strong>005</strong> = Nomor Urut<br>
-        <strong>424.053</strong> = Kode Sekolah<br>
-        <strong>2026</strong> = Tahun
-      </p>
-    </div>
-  </div>
-</div>
-
-
-      
-      <form id="suratForm" onsubmit="return handleSubmit(event)">
-        <!-- Jenis Surat -->
-        <div class="form-group">
-          <label for="jenisSurat" class="required">Jenis Surat</label>
-          <select id="jenisSurat" name="jenisSurat" required>
-            <option value="">-- Pilih Jenis Surat --</option>
-            <option value="Masuk">Surat Masuk</option>
-            <option value="Keluar">Surat Keluar</option>
-          </select>
-          <span class="error-message" id="jenisSuratError"></span>
+    <div class="container">
+      <header>
+        <div class="header-content">
+          <div class="logo-container">
+            <img src="Logosekolah.png" alt="Logo SDN TOYANING 1 REJOSO" />
+          </div>
+          <div class="header-text">
+            <div class="institution-name">SDN TOYANING 1 REJOSO</div>
+            <h1>📋 Aplikasi Pencatatan Arsip Surat</h1>
+            <p class="subtitle">
+              Sistem Pencatatan Surat Masuk dan Surat Keluar
+            </p>
+          </div>
         </div>
+      </header>
 
-        <!-- Nomor Surat -->
-        <div class="form-group">
-          <label for="nomorSurat" class="required">Nomor Surat</label>
-          <input type="text" id="nomorSurat" name="nomorSurat" placeholder="Contoh: 001/SM/2024" required />
-          <span class="error-message" id="nomorSuratError"></span>
+      <div class="nav-actions">
+        <div class="nav-links">
+          <a href="daftar-surat.html">📋 Lihat Daftar Surat</a>
         </div>
+      </div>
 
-        <!-- Tanggal Surat -->
-        <div class="form-group">
-          <label for="tanggalSurat" class="required">Tanggal Surat</label>
-          <input type="date" id="tanggalSurat" name="tanggalSurat" required />
-          <span class="error-message" id="tanggalSuratError"></span>
-        </div>
-
-        <!-- Tanggal Terima/Kirim -->
-        <div class="form-group">
-          <label for="tanggalTerimaKirim">Tanggal Terima/Kirim</label>
-          <input type="date" id="tanggalTerimaKirim" name="tanggalTerimaKirim" />
-          <small class="help-text">Tanggal surat diterima (untuk surat masuk) atau dikirim (untuk surat
-            keluar)</small>
-        </div>
-
-        <!-- Asal/Tujuan Surat -->
-        <div class="form-group">
-          <label for="asalTujuan">Asal/Tujuan Surat</label>
-          <input type="text" id="asalTujuan" name="asalTujuan"
-            placeholder="Nama instansi atau pihak yang mengirim/menerima surat" />
-          <small class="help-text">Asal surat (untuk surat masuk) atau tujuan surat (untuk surat keluar)</small>
-        </div>
-
-        <!-- Perihal -->
-        <div class="form-group">
-          <label for="perihal">Perihal</label>
-          <input type="text" id="perihal" name="perihal" placeholder="Ringkasan isi surat" />
-        </div>
-
-        <!-- Keterangan/Disposisi -->
-        <div class="form-group">
-          <label for="keterangan">Keterangan/Disposisi</label>
-          <textarea id="keterangan" name="keterangan" rows="4"
-            placeholder="Catatan tambahan atau disposisi surat"></textarea>
-        </div>
-
-        <!-- Upload File -->
-        <div class="form-group">
-          <label for="fileUpload">Upload File (Opsional)</label>
-          <input type="file" id="fileUpload" name="fileUpload" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx" />
-          <small class="help-text">Format yang didukung: PDF, DOC, DOCX, JPG, PNG, XLS, XLSX (Maks: 2MB - disarankan
-            <500KB untuk hasil terbaik)</small>
-              <div id="fileInfo" style="margin-top: 8px; font-size: 12px; color: #666; display: none;">
-                <span id="fileName"></span> (<span id="fileSize"></span>)
-                <button type="button" onclick="removeFile()"
-                  style="margin-left: 10px; padding: 2px 8px; font-size: 11px; background: #ea4335; color: white; border: none; border-radius: 3px; cursor: pointer;">Hapus</button>
-              </div>
-        </div>
-
-        <!-- Tombol Submit -->
-        <div class="form-group">
-          <button type="submit" id="submitBtn" class="btn-submit">
-            <span id="submitText">Simpan Data</span>
-            <span id="submitLoader" class="loader" style="display: none;"></span>
+      <main>
+        <!-- Informasi Kode Surat -->
+        <div class="info-box">
+          <button type="button" class="info-toggle" onclick="toggleInfo()">
+            📘 Informasi Kode Surat
+            <span id="infoArrow">▼</span>
           </button>
-          <button type="button" id="resetBtn" class="btn-reset" onclick="resetForm()">
-            Reset Formulir
-          </button>
+
+          <div id="infoContent" class="info-content">
+            <h4>Kode Utama (Administrasi Pendidikan)</h4>
+            <ul>
+              <li><strong>420</strong> : Pendidikan secara umum</li>
+              <li><strong>421</strong> : Sekolah / Pendidikan</li>
+              <li><strong>421.2</strong> : Pendidikan Dasar</li>
+              <li><strong>421.3</strong> : Pendidikan Menengah</li>
+              <li><strong>421.5</strong> : Sekolah Kejuruan</li>
+              <li><strong>421.6</strong> : Kegiatan Sekolah</li>
+              <li><strong>422</strong> : Administrasi Sekolah / SPP</li>
+            </ul>
+
+            <h4>Kode Jenis Surat</h4>
+            <ul>
+              <li><strong>01</strong> : Surat Keputusan (SK)</li>
+              <li><strong>02</strong> : Surat Undangan (SU)</li>
+              <li><strong>03</strong> : Surat Permohonan (SPm)</li>
+              <li><strong>04</strong> : Surat Pemberitahuan (SPb)</li>
+              <li><strong>05</strong> : Surat Peminjaman (SPp)</li>
+              <li><strong>08</strong> : Surat Tugas (ST)</li>
+            </ul>
+
+            <h4>Contoh Struktur Nomor Surat</h4>
+            <div class="example-box">
+              <code>421.3 / 005 / 424.053 / 2026</code>
+              <p>
+                <strong>421.3</strong> = Kode Surat<br />
+                <strong>005</strong> = Nomor Urut<br />
+                <strong>424.053</strong> = Kode Sekolah<br />
+                <strong>2026</strong> = Tahun
+              </p>
+            </div>
+          </div>
         </div>
-      </form>
 
-      <!-- Pesan Notifikasi -->
-      <div id="notification" class="notification" style="display: none;"></div>
-    </main>
+        <form id="suratForm" onsubmit="return handleSubmit(event);">
+          <!-- Jenis Surat -->
+          <div class="form-group">
+            <label for="jenisSurat" class="required">Jenis Surat</label>
+            <select id="jenisSurat" name="jenisSurat" required>
+              <option value="">-- Pilih Jenis Surat --</option>
+              <option value="Masuk">Surat Masuk</option>
+              <option value="Keluar">Surat Keluar</option>
+            </select>
+            <span class="error-message" id="jenisSuratError"></span>
+          </div>
 
-    <footer>
-      <p>&copy; 2024 Aplikasi Pencatatan Arsip Surat</p>
-    </footer>
-  </div>
+          <!-- Nomor Surat -->
+          <div class="form-group">
+            <label for="nomorSurat" class="required">Nomor Surat</label>
+            <input
+              type="text"
+              id="nomorSurat"
+              name="nomorSurat"
+              placeholder="Contoh: 001/SM/2024"
+              required
+            />
+            <span class="error-message" id="nomorSuratError"></span>
+          </div>
 
-  <script>
-    /**
-     * KONFIGURASI URL GOOGLE APPS SCRIPT
-     * GANTI DENGAN URL WEB APP ANDA
-     * Cara mendapatkan URL:
-     * 1. Buka Google Apps Script editor
-     * 2. Klik Deploy > New deployment
-     * 3. Pilih Web app
-     * 4. Copy URL yang muncul setelah deploy
-     */
-    const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRmjomUc5XjLB5iH0-ChK-kZH6Vh7mxqxUWoMTafygPgk7H3F_t6tvyg0-aRTNoDfaJA/exec';
+          <!-- Tanggal Surat -->
+          <div class="form-group">
+            <label for="tanggalSurat" class="required">Tanggal Surat</label>
+            <input type="date" id="tanggalSurat" name="tanggalSurat" required />
+            <span class="error-message" id="tanggalSuratError"></span>
+          </div>
 
-    // Mode pengiriman data: 'url' untuk HTTP POST, 'script' untuk google.script.run
-    const DATA_SUBMIT_MODE = 'url'; // 'url' atau 'script'
+          <!-- Tanggal Terima/Kirim -->
+          <div class="form-group">
+            <label for="tanggalTerimaKirim">Tanggal Terima/Kirim</label>
+            <input
+              type="date"
+              id="tanggalTerimaKirim"
+              name="tanggalTerimaKirim"
+            />
+            <small class="help-text"
+              >Tanggal surat diterima (untuk surat masuk) atau dikirim (untuk
+              surat keluar)</small
+            >
+          </div>
 
-    /**
-     * Fungsi untuk mengirim data ke Google Apps Script via HTTP GET (menghindari CORS)
-     * @param {Object} formData - Data yang akan dikirim
-     * @param {Function} successCallback - Callback jika sukses
-     * @param {Function} errorCallback - Callback jika error
-     */
-    function sendDataViaURL(formData, successCallback, errorCallback) {
-      // Validasi URL
-      if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'GANTI_DENGAN_URL_WEB_APP_ANDA') {
-        const error = {
-          message: 'URL Google Apps Script belum dikonfigurasi. Silakan set GOOGLE_APPS_SCRIPT_URL di JavaScript.'
-        };
-        console.error('Error:', error);
-        if (errorCallback) errorCallback(error);
-        return;
-      }
+          <!-- Asal/Tujuan Surat -->
+          <div class="form-group">
+            <label for="asalTujuan">Asal/Tujuan Surat</label>
+            <input
+              type="text"
+              id="asalTujuan"
+              name="asalTujuan"
+              placeholder="Nama instansi atau pihak yang mengirim/menerima surat"
+            />
+            <small class="help-text"
+              >Asal surat (untuk surat masuk) atau tujuan surat (untuk surat
+              keluar)</small
+            >
+          </div>
 
-      console.log('Mengirim data via URL:', formData);
-      console.log('URL target:', GOOGLE_APPS_SCRIPT_URL);
+          <!-- Perihal -->
+          <div class="form-group">
+            <label for="perihal">Perihal</label>
+            <input
+              type="text"
+              id="perihal"
+              name="perihal"
+              placeholder="Ringkasan isi surat"
+            />
+          </div>
 
-      // Menggunakan GET dengan parameter untuk menghindari CORS issue
-      // Build URL dengan parameter
-      const params = new URLSearchParams();
-      params.append('action', 'save');
-      params.append('jenisSurat', formData.jenisSurat || '');
-      params.append('nomorSurat', formData.nomorSurat || '');
-      params.append('tanggalSurat', formData.tanggalSurat || '');
-      if (formData.tanggalTerimaKirim) {
-        params.append('tanggalTerimaKirim', formData.tanggalTerimaKirim);
-      }
-      if (formData.asalTujuan) {
-        params.append('asalTujuan', formData.asalTujuan);
-      }
-      if (formData.perihal) {
-        params.append('perihal', formData.perihal);
-      }
-      if (formData.keterangan) {
-        params.append('keterangan', formData.keterangan);
-      }
+          <!-- Keterangan/Disposisi -->
+          <div class="form-group">
+            <label for="keterangan">Keterangan/Disposisi</label>
+            <textarea
+              id="keterangan"
+              name="keterangan"
+              rows="4"
+              placeholder="Catatan tambahan atau disposisi surat"
+            ></textarea>
+          </div>
 
-      // Jika ada file, selalu gunakan form submission (karena file membuat URL terlalu panjang)
-      if (formData.fileName && formData.fileData) {
-        const base64Size = formData.fileData.length;
-        console.log('File terdeteksi, base64 size:', (base64Size / 1024).toFixed(2), 'KB');
-        console.log('Menggunakan form submission dengan iframe untuk menghindari batas URL');
-        return sendDataViaFormSubmission(formData, successCallback, errorCallback);
-      }
+          <!-- Upload File -->
+          <div class="form-group">
+            <label for="fileUpload">Upload File (Opsional)</label>
+            <input
+              type="file"
+              id="fileUpload"
+              name="fileUpload"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx"
+            />
+            <small class="help-text"
+              >Format yang didukung: PDF, DOC, DOCX, JPG, PNG, XLS, XLSX (Maks:
+              2MB - disarankan <500KB untuk hasil terbaik)</small
+            >
+            <div
+              id="fileInfo"
+              style="
+                margin-top: 8px;
+                font-size: 12px;
+                color: #666;
+                display: none;
+              "
+            >
+              <span id="fileName"></span> (<span id="fileSize"></span>)
+              <button
+                type="button"
+                onclick="removeFile()"
+                style="
+                  margin-left: 10px;
+                  padding: 2px 8px;
+                  font-size: 11px;
+                  background: #ea4335;
+                  color: white;
+                  border: none;
+                  border-radius: 3px;
+                  cursor: pointer;
+                "
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
 
-      const urlWithParams = GOOGLE_APPS_SCRIPT_URL + '?' + params.toString();
-      console.log('URL dengan parameter:', urlWithParams);
+          <!-- Tombol Submit -->
+          <div class="form-group">
+            <button type="submit" id="submitBtn" class="btn-submit">
+              <span id="submitText">Simpan Data</span>
+              <span
+                id="submitLoader"
+                class="loader"
+                style="display: none"
+              ></span>
+            </button>
+            <button
+              type="button"
+              id="resetBtn"
+              class="btn-reset"
+              onclick="resetForm()"
+            >
+              Reset Formulir
+            </button>
+          </div>
+        </form>
 
-      // Menggunakan XMLHttpRequest dengan GET (lebih kompatibel)
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', urlWithParams, true);
+        <!-- Pesan Notifikasi -->
+        <div id="notification" class="notification" style="display: none"></div>
+      </main>
 
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-          console.log('Response status:', xhr.status);
-          console.log('Response text:', xhr.responseText);
+      <footer>
+        <p>&copy; 2024 Aplikasi Pencatatan Arsip Surat</p>
+      </footer>
+    </div>
 
-          if (xhr.status === 200 || xhr.status === 0) {
-            // Status 200 atau 0 biasanya berarti request berhasil
-            // Meskipun response tidak bisa dibaca karena CORS, data kemungkinan sudah terkirim
-            try {
-              if (xhr.responseText && xhr.responseText.trim() !== '') {
-                const response = JSON.parse(xhr.responseText);
-                console.log('Response dari server (parsed):', response);
+    <script>
+      /**
+       * KONFIGURASI URL GOOGLE APPS SCRIPT
+       * GANTI DENGAN URL WEB APP ANDA
+       * Cara mendapatkan URL:
+       * 1. Buka Google Apps Script editor
+       * 2. Klik Deploy > New deployment
+       * 3. Pilih Web app
+       * 4. Copy URL yang muncul setelah deploy
+       */
+      const GOOGLE_APPS_SCRIPT_URL =
+        "https://script.google.com/macros/s/AKfycbyRmjomUc5XjLB5iH0-ChK-kZH6Vh7mxqxUWoMTafygPgk7H3F_t6tvyg0-aRTNoDfaJA/exec";
 
-                if (response.success) {
-                  if (successCallback) {
-                    successCallback(response);
+      // Mode pengiriman data: 'url' untuk HTTP POST, 'script' untuk google.script.run
+      const DATA_SUBMIT_MODE = "url"; // 'url' atau 'script'
+
+      /**
+       * Fungsi untuk mengirim data ke Google Apps Script via HTTP GET (menghindari CORS)
+       * @param {Object} formData - Data yang akan dikirim
+       * @param {Function} successCallback - Callback jika sukses
+       * @param {Function} errorCallback - Callback jika error
+       */
+      function sendDataViaURL(formData, successCallback, errorCallback) {
+        // Validasi URL
+        if (
+          !GOOGLE_APPS_SCRIPT_URL ||
+          GOOGLE_APPS_SCRIPT_URL === "GANTI_DENGAN_URL_WEB_APP_ANDA"
+        ) {
+          const error = {
+            message:
+              "URL Google Apps Script belum dikonfigurasi. Silakan set GOOGLE_APPS_SCRIPT_URL di JavaScript.",
+          };
+          console.error("Error:", error);
+          if (errorCallback) errorCallback(error);
+          return;
+        }
+
+        console.log("Mengirim data via URL:", formData);
+        console.log("URL target:", GOOGLE_APPS_SCRIPT_URL);
+
+        // Menggunakan GET dengan parameter untuk menghindari CORS issue
+        // Build URL dengan parameter
+        const params = new URLSearchParams();
+        params.append("action", "save");
+        params.append("jenisSurat", formData.jenisSurat || "");
+        params.append("nomorSurat", formData.nomorSurat || "");
+        params.append("tanggalSurat", formData.tanggalSurat || "");
+        if (formData.tanggalTerimaKirim) {
+          params.append("tanggalTerimaKirim", formData.tanggalTerimaKirim);
+        }
+        if (formData.asalTujuan) {
+          params.append("asalTujuan", formData.asalTujuan);
+        }
+        if (formData.perihal) {
+          params.append("perihal", formData.perihal);
+        }
+        if (formData.keterangan) {
+          params.append("keterangan", formData.keterangan);
+        }
+
+        // Jika ada file, selalu gunakan form submission (karena file membuat URL terlalu panjang)
+        if (formData.fileName && formData.fileData) {
+          const base64Size = formData.fileData.length;
+          console.log(
+            "File terdeteksi, base64 size:",
+            (base64Size / 1024).toFixed(2),
+            "KB",
+          );
+          console.log(
+            "Menggunakan form submission dengan iframe untuk menghindari batas URL",
+          );
+          return sendDataViaFormSubmission(
+            formData,
+            successCallback,
+            errorCallback,
+          );
+        }
+
+        const urlWithParams = GOOGLE_APPS_SCRIPT_URL + "?" + params.toString();
+        console.log("URL dengan parameter:", urlWithParams);
+
+        // Menggunakan XMLHttpRequest dengan GET (lebih kompatibel)
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", urlWithParams, true);
+
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            console.log("Response status:", xhr.status);
+            console.log("Response text:", xhr.responseText);
+
+            if (xhr.status === 200 || xhr.status === 0) {
+              // Status 200 atau 0 biasanya berarti request berhasil
+              // Meskipun response tidak bisa dibaca karena CORS, data kemungkinan sudah terkirim
+              try {
+                if (xhr.responseText && xhr.responseText.trim() !== "") {
+                  const response = JSON.parse(xhr.responseText);
+                  console.log("Response dari server (parsed):", response);
+
+                  if (response.success) {
+                    if (successCallback) {
+                      successCallback(response);
+                    }
+                  } else {
+                    const error = {
+                      message: response.message || "Data gagal disimpan",
+                    };
+                    console.error("Server error:", error);
+                    if (errorCallback) errorCallback(error);
                   }
                 } else {
+                  // Response kosong karena CORS, tapi status 200 berarti request berhasil
+                  console.log(
+                    "Response kosong karena CORS, tapi status 200 - data kemungkinan sudah terkirim",
+                  );
+                  if (successCallback) {
+                    successCallback({
+                      success: true,
+                      message:
+                        "Data berhasil dikirim! (Silakan cek spreadsheet untuk konfirmasi)",
+                    });
+                  }
+                }
+              } catch (e) {
+                console.warn("Tidak bisa parse response sebagai JSON:", e);
+                console.log("Response raw:", xhr.responseText);
+
+                // Jika response tidak JSON tapi status 200, anggap sukses
+                // (karena CORS mungkin block response tapi data sudah terkirim)
+                if (xhr.status === 200 || xhr.status === 0) {
+                  console.log(
+                    "Status 200/0 - data kemungkinan sudah terkirim meskipun response tidak bisa dibaca",
+                  );
+                  if (successCallback) {
+                    successCallback({
+                      success: true,
+                      message:
+                        "Data berhasil dikirim! (Silakan cek spreadsheet untuk konfirmasi)",
+                    });
+                  }
+                } else if (
+                  xhr.responseText &&
+                  xhr.responseText.includes("error")
+                ) {
                   const error = {
-                    message: response.message || 'Data gagal disimpan'
+                    message: "Error dari server: " + xhr.responseText,
                   };
-                  console.error('Server error:', error);
                   if (errorCallback) errorCallback(error);
-                }
-              } else {
-                // Response kosong karena CORS, tapi status 200 berarti request berhasil
-                console.log('Response kosong karena CORS, tapi status 200 - data kemungkinan sudah terkirim');
-                if (successCallback) {
-                  successCallback({
-                    success: true,
-                    message: 'Data berhasil dikirim! (Silakan cek spreadsheet untuk konfirmasi)'
-                  });
-                }
-              }
-            } catch (e) {
-              console.warn('Tidak bisa parse response sebagai JSON:', e);
-              console.log('Response raw:', xhr.responseText);
-
-              // Jika response tidak JSON tapi status 200, anggap sukses
-              // (karena CORS mungkin block response tapi data sudah terkirim)
-              if (xhr.status === 200 || xhr.status === 0) {
-                console.log('Status 200/0 - data kemungkinan sudah terkirim meskipun response tidak bisa dibaca');
-                if (successCallback) {
-                  successCallback({
-                    success: true,
-                    message: 'Data berhasil dikirim! (Silakan cek spreadsheet untuk konfirmasi)'
-                  });
-                }
-              } else if (xhr.responseText && xhr.responseText.includes('error')) {
-                const error = {
-                  message: 'Error dari server: ' + xhr.responseText
-                };
-                if (errorCallback) errorCallback(error);
-              } else {
-                // Anggap sukses jika status 200/0
-                if (successCallback) {
-                  successCallback({
-                    success: true,
-                    message: 'Data berhasil dikirim! (Silakan cek spreadsheet untuk konfirmasi)'
-                  });
+                } else {
+                  // Anggap sukses jika status 200/0
+                  if (successCallback) {
+                    successCallback({
+                      success: true,
+                      message:
+                        "Data berhasil dikirim! (Silakan cek spreadsheet untuk konfirmasi)",
+                    });
+                  }
                 }
               }
+            } else {
+              const error = {
+                message: "HTTP Error: " + xhr.status + " - " + xhr.statusText,
+              };
+              console.error("HTTP Error:", error);
+              if (errorCallback) errorCallback(error);
             }
-          } else {
-            const error = {
-              message: 'HTTP Error: ' + xhr.status + ' - ' + xhr.statusText
-            };
-            console.error('HTTP Error:', error);
-            if (errorCallback) errorCallback(error);
           }
-        }
-      };
-
-      xhr.onerror = function () {
-        const error = {
-          message: 'Network error saat mengirim data. Pastikan URL benar dan koneksi internet stabil.'
         };
-        console.error('Network error:', error);
-        if (errorCallback) errorCallback(error);
-      };
 
-      xhr.ontimeout = function () {
-        const error = {
-          message: 'Request timeout. Server tidak merespons dalam waktu yang ditentukan.'
+        xhr.onerror = function () {
+          const error = {
+            message:
+              "Network error saat mengirim data. Pastikan URL benar dan koneksi internet stabil.",
+          };
+          console.error("Network error:", error);
+          if (errorCallback) errorCallback(error);
         };
-        console.error('Timeout error:', error);
-        if (errorCallback) errorCallback(error);
-      };
 
-      // Set timeout 30 detik
-      xhr.timeout = 30000;
-
-      // Kirim request
-      try {
-        xhr.send();
-      } catch (e) {
-        const error = {
-          message: 'Error saat mengirim data: ' + e.message
+        xhr.ontimeout = function () {
+          const error = {
+            message:
+              "Request timeout. Server tidak merespons dalam waktu yang ditentukan.",
+          };
+          console.error("Timeout error:", error);
+          if (errorCallback) errorCallback(error);
         };
-        console.error('Send error:', error);
-        if (errorCallback) errorCallback(error);
-      }
-    }
 
-    /**
-     * Fungsi untuk mengirim data via Form Submission dengan iframe (untuk file besar)
-     * Menghindari CORS dan batas panjang URL dengan membagi file menjadi chunk
-     * @param {Object} formData - Data yang akan dikirim
-     * @param {Function} successCallback - Callback jika sukses
-     * @param {Function} errorCallback - Callback jika error
-     */
-    function sendDataViaFormSubmission(formData, successCallback, errorCallback) {
-      if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'GANTI_DENGAN_URL_WEB_APP_ANDA') {
-        const error = {
-          message: 'URL Google Apps Script belum dikonfigurasi.'
-        };
-        if (errorCallback) errorCallback(error);
-        return;
-      }
+        // Set timeout 30 detik
+        xhr.timeout = 30000;
 
-      console.log('Mengirim data via Form Submission (untuk file besar):', formData);
-
-      // Tentukan method yang akan digunakan
-      const usePost = (formData.fileName && formData.fileData);
-      const formMethod = usePost ? 'POST' : 'GET';
-
-      if (formData.fileName) {
-        const fileSizeKB = formData.fileData ? (formData.fileData.length / 1024).toFixed(2) : 0;
-        console.log('File akan dikirim:', formData.fileName, 'Size:', fileSizeKB + ' KB');
-        console.log('Method yang akan digunakan:', formMethod);
-
-        // Jika file terlalu besar (>500KB base64), beri peringatan
-        if (formData.fileData && formData.fileData.length > 500000) {
-          console.warn('File sangat besar (>500KB base64), mungkin melebihi batas. Pertimbangkan kompresi file.');
-        }
-      }
-
-      // Buat form dinamis
-      const form = document.createElement('form');
-      // Gunakan POST jika ada file (untuk menghindari batas panjang URL)
-      // Gunakan GET jika tidak ada file (untuk menghindari CORS preflight)
-      form.method = formMethod;
-      form.action = GOOGLE_APPS_SCRIPT_URL;
-      form.style.display = 'none';
-      // Set enctype untuk POST (form-urlencoded)
-      if (form.method === 'POST') {
-        form.enctype = 'application/x-www-form-urlencoded';
-      }
-      form.target = 'hiddenIframe_' + Date.now();
-
-      console.log('Form method:', form.method);
-      console.log('Form enctype:', form.enctype || 'default');
-
-      // Buat hidden iframe untuk response
-      const iframeId = 'hiddenIframe_' + Date.now();
-      const iframe = document.createElement('iframe');
-      iframe.id = iframeId;
-      iframe.name = iframeId;
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-      form.target = iframeId;
-
-      // Tambahkan input fields
-      const fields = {
-        action: 'save',
-        jenisSurat: formData.jenisSurat || '',
-        nomorSurat: formData.nomorSurat || '',
-        tanggalSurat: formData.tanggalSurat || '',
-        tanggalTerimaKirim: formData.tanggalTerimaKirim || '',
-        asalTujuan: formData.asalTujuan || '',
-        perihal: formData.perihal || '',
-        keterangan: formData.keterangan || '',
-        fileName: formData.fileName || '',
-        fileType: formData.fileType || '',
-        fileData: formData.fileData || ''
-      };
-
-      // Tambahkan semua field ke form
-      // Catatan: Untuk file besar, value mungkin dipotong oleh browser
-      for (const key in fields) {
-        if (fields[key] !== null && fields[key] !== '') {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          // Potong value jika terlalu panjang (untuk fileData)
-          if (key === 'fileData' && fields[key].length > 500000) {
-            console.warn('File data terlalu panjang, mungkin akan dipotong oleh browser');
-            // Coba kirim saja, browser akan handle
-            input.value = fields[key];
-          } else {
-            input.value = fields[key];
-          }
-          form.appendChild(input);
-        }
-      }
-
-      // Log total form data size
-      const totalFormSize = Array.from(form.querySelectorAll('input'))
-        .reduce((sum, input) => sum + (input.value ? input.value.length : 0), 0);
-      console.log('Total form data size:', (totalFormSize / 1024).toFixed(2), 'KB');
-
-      // Listen untuk load event (response dari server)
-      let loadTriggered = false;
-      iframe.onload = function () {
-        if (loadTriggered) return;
-        loadTriggered = true;
-
+        // Kirim request
         try {
-          // Coba baca response dari iframe (mungkin tidak bisa karena CORS)
-          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-          const responseText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
+          xhr.send();
+        } catch (e) {
+          const error = {
+            message: "Error saat mengirim data: " + e.message,
+          };
+          console.error("Send error:", error);
+          if (errorCallback) errorCallback(error);
+        }
+      }
 
-          if (responseText) {
-            try {
-              const response = JSON.parse(responseText);
-              console.log('Response dari server:', response);
-              if (response.success) {
-                if (successCallback) successCallback(response);
-              } else {
-                if (errorCallback) errorCallback({ message: response.message });
+      /**
+       * Fungsi untuk mengirim data via Form Submission dengan iframe (untuk file besar)
+       * Menghindari CORS dan batas panjang URL dengan membagi file menjadi chunk
+       * @param {Object} formData - Data yang akan dikirim
+       * @param {Function} successCallback - Callback jika sukses
+       * @param {Function} errorCallback - Callback jika error
+       */
+      function sendDataViaFormSubmission(
+        formData,
+        successCallback,
+        errorCallback,
+      ) {
+        if (
+          !GOOGLE_APPS_SCRIPT_URL ||
+          GOOGLE_APPS_SCRIPT_URL === "GANTI_DENGAN_URL_WEB_APP_ANDA"
+        ) {
+          const error = {
+            message: "URL Google Apps Script belum dikonfigurasi.",
+          };
+          if (errorCallback) errorCallback(error);
+          return;
+        }
+
+        console.log(
+          "Mengirim data via Form Submission (untuk file besar):",
+          formData,
+        );
+
+        // Tentukan method yang akan digunakan
+        const usePost = formData.fileName && formData.fileData;
+        const formMethod = usePost ? "POST" : "GET";
+
+        if (formData.fileName) {
+          const fileSizeKB = formData.fileData
+            ? (formData.fileData.length / 1024).toFixed(2)
+            : 0;
+          console.log(
+            "File akan dikirim:",
+            formData.fileName,
+            "Size:",
+            fileSizeKB + " KB",
+          );
+          console.log("Method yang akan digunakan:", formMethod);
+
+          // Jika file terlalu besar (>500KB base64), beri peringatan
+          if (formData.fileData && formData.fileData.length > 500000) {
+            console.warn(
+              "File sangat besar (>500KB base64), mungkin melebihi batas. Pertimbangkan kompresi file.",
+            );
+          }
+        }
+
+        // Buat form dinamis
+        const form = document.createElement("form");
+        // Gunakan POST jika ada file (untuk menghindari batas panjang URL)
+        // Gunakan GET jika tidak ada file (untuk menghindari CORS preflight)
+        form.method = formMethod;
+        form.action = GOOGLE_APPS_SCRIPT_URL;
+        form.style.display = "none";
+        // Set enctype untuk POST (form-urlencoded)
+        if (form.method === "POST") {
+          form.enctype = "application/x-www-form-urlencoded";
+        }
+        form.target = "hiddenIframe_" + Date.now();
+
+        console.log("Form method:", form.method);
+        console.log("Form enctype:", form.enctype || "default");
+
+        // Buat hidden iframe untuk response
+        const iframeId = "hiddenIframe_" + Date.now();
+        const iframe = document.createElement("iframe");
+        iframe.id = iframeId;
+        iframe.name = iframeId;
+        iframe.style.display = "none";
+        document.body.appendChild(iframe);
+        form.target = iframeId;
+
+        // Tambahkan input fields
+        const fields = {
+          action: "save",
+          jenisSurat: formData.jenisSurat || "",
+          nomorSurat: formData.nomorSurat || "",
+          tanggalSurat: formData.tanggalSurat || "",
+          tanggalTerimaKirim: formData.tanggalTerimaKirim || "",
+          asalTujuan: formData.asalTujuan || "",
+          perihal: formData.perihal || "",
+          keterangan: formData.keterangan || "",
+          fileName: formData.fileName || "",
+          fileType: formData.fileType || "",
+          fileData: formData.fileData || "",
+        };
+
+        // Tambahkan semua field ke form
+        // Catatan: Untuk file besar, value mungkin dipotong oleh browser
+        for (const key in fields) {
+          if (fields[key] !== null && fields[key] !== "") {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = key;
+            // Potong value jika terlalu panjang (untuk fileData)
+            if (key === "fileData" && fields[key].length > 500000) {
+              console.warn(
+                "File data terlalu panjang, mungkin akan dipotong oleh browser",
+              );
+              // Coba kirim saja, browser akan handle
+              input.value = fields[key];
+            } else {
+              input.value = fields[key];
+            }
+            form.appendChild(input);
+          }
+        }
+
+        // Log total form data size
+        const totalFormSize = Array.from(form.querySelectorAll("input")).reduce(
+          (sum, input) => sum + (input.value ? input.value.length : 0),
+          0,
+        );
+        console.log(
+          "Total form data size:",
+          (totalFormSize / 1024).toFixed(2),
+          "KB",
+        );
+
+        // Listen untuk load event (response dari server)
+        let loadTriggered = false;
+        iframe.onload = function () {
+          if (loadTriggered) return;
+          loadTriggered = true;
+
+          try {
+            // Coba baca response dari iframe (mungkin tidak bisa karena CORS)
+            const iframeDoc =
+              iframe.contentDocument || iframe.contentWindow.document;
+            const responseText = iframeDoc.body
+              ? iframeDoc.body.textContent || iframeDoc.body.innerText
+              : "";
+
+            if (responseText) {
+              try {
+                const response = JSON.parse(responseText);
+                console.log("Response dari server:", response);
+                if (response.success) {
+                  if (successCallback) successCallback(response);
+                } else {
+                  if (errorCallback)
+                    errorCallback({ message: response.message });
+                }
+              } catch (e) {
+                // Response bukan JSON, anggap sukses
+                console.log("Response bukan JSON, anggap sukses");
+                if (successCallback) {
+                  successCallback({
+                    success: true,
+                    message:
+                      "Data dan file berhasil dikirim! (Silakan cek spreadsheet dan Google Drive untuk konfirmasi)",
+                  });
+                }
               }
-            } catch (e) {
-              // Response bukan JSON, anggap sukses
-              console.log('Response bukan JSON, anggap sukses');
+            } else {
+              // Response kosong, anggap sukses (karena CORS)
+              console.log("Response kosong karena CORS, anggap sukses");
               if (successCallback) {
                 successCallback({
                   success: true,
-                  message: 'Data dan file berhasil dikirim! (Silakan cek spreadsheet dan Google Drive untuk konfirmasi)'
+                  message:
+                    "Data dan file berhasil dikirim! (Silakan cek spreadsheet dan Google Drive untuk konfirmasi)",
                 });
               }
             }
-          } else {
-            // Response kosong, anggap sukses (karena CORS)
-            console.log('Response kosong karena CORS, anggap sukses');
+          } catch (e) {
+            // Tidak bisa akses iframe content (CORS), anggap sukses
+            console.log(
+              "Tidak bisa akses iframe content (CORS), anggap sukses",
+            );
             if (successCallback) {
               successCallback({
                 success: true,
-                message: 'Data dan file berhasil dikirim! (Silakan cek spreadsheet dan Google Drive untuk konfirmasi)'
+                message:
+                  "Data dan file berhasil dikirim! (Silakan cek spreadsheet dan Google Drive untuk konfirmasi)",
               });
             }
           }
-        } catch (e) {
-          // Tidak bisa akses iframe content (CORS), anggap sukses
-          console.log('Tidak bisa akses iframe content (CORS), anggap sukses');
-          if (successCallback) {
-            successCallback({
-              success: true,
-              message: 'Data dan file berhasil dikirim! (Silakan cek spreadsheet dan Google Drive untuk konfirmasi)'
-            });
-          }
-        }
 
-        // Cleanup setelah beberapa detik
-        setTimeout(() => {
-          if (form.parentNode) {
-            form.parentNode.removeChild(form);
-          }
-          if (iframe.parentNode) {
-            iframe.parentNode.removeChild(iframe);
-          }
-        }, 2000);
-      };
-
-      // Tambahkan form ke body dan submit
-      document.body.appendChild(form);
-      console.log('Submitting form dengan iframe...');
-      console.log('Form action:', form.action);
-      console.log('Form target:', form.target);
-      console.log('Number of inputs:', form.querySelectorAll('input').length);
-
-      // Submit form
-      try {
-        form.submit();
-        console.log('Form submitted successfully');
-      } catch (submitError) {
-        console.error('Error submitting form:', submitError);
-        if (errorCallback) {
-          errorCallback({
-            message: 'Error submitting form: ' + submitError.message
-          });
-        }
-        return;
-      }
-
-      // Set timeout fallback (jika iframe tidak load dalam 15 detik)
-      setTimeout(() => {
-        if (!loadTriggered) {
-          console.log('Timeout: Anggap sukses setelah 15 detik (file mungkin sudah terkirim)');
-          console.log('Silakan cek spreadsheet dan Google Drive untuk konfirmasi');
-          if (successCallback) {
-            successCallback({
-              success: true,
-              message: 'Data dan file berhasil dikirim! (Silakan cek spreadsheet dan Google Drive untuk konfirmasi)'
-            });
-          }
-          loadTriggered = true;
-
-          // Cleanup
+          // Cleanup setelah beberapa detik
           setTimeout(() => {
             if (form.parentNode) {
               form.parentNode.removeChild(form);
@@ -1031,351 +1120,436 @@
             if (iframe.parentNode) {
               iframe.parentNode.removeChild(iframe);
             }
-          }, 1000);
-        }
-      }, 15000);
-    }
+          }, 2000);
+        };
 
-    /**
-     * Fungsi untuk menangani submit formulir
-     */
-    function handleSubmit(event) {
-      event.preventDefault();
-      console.log('Form submitted');
+        // Tambahkan form ke body dan submit
+        document.body.appendChild(form);
+        console.log("Submitting form dengan iframe...");
+        console.log("Form action:", form.action);
+        console.log("Form target:", form.target);
+        console.log("Number of inputs:", form.querySelectorAll("input").length);
 
-      // Validasi form
-      if (!validateForm()) {
-        console.log('Validasi gagal');
-        return;
-      }
-
-      // Ambil data dari form
-      const formData = {
-        jenisSurat: document.getElementById('jenisSurat').value,
-        nomorSurat: document.getElementById('nomorSurat').value.trim(),
-        tanggalSurat: document.getElementById('tanggalSurat').value,
-        tanggalTerimaKirim: document.getElementById('tanggalTerimaKirim').value || null,
-        asalTujuan: document.getElementById('asalTujuan').value.trim(),
-        perihal: document.getElementById('perihal').value.trim(),
-        keterangan: document.getElementById('keterangan').value.trim()
-      };
-
-      // Handle file upload jika ada
-      const fileInput = document.getElementById('fileUpload');
-      if (fileInput.files && fileInput.files.length > 0) {
-        const file = fileInput.files[0];
-
-        // Validasi ukuran file (max 2MB untuk menghindari masalah URL panjang)
-        // Base64 akan membuat file ~33% lebih besar, jadi 2MB file = ~2.7MB base64
-        const maxSize = 2 * 1024 * 1024; // 2MB
-        if (file.size > maxSize) {
-          showNotification('File terlalu besar. Maksimal 2MB untuk menghindari masalah pengiriman.', 'error');
-          showLoading(false);
+        // Submit form
+        try {
+          form.submit();
+          console.log("Form submitted successfully");
+        } catch (submitError) {
+          console.error("Error submitting form:", submitError);
+          if (errorCallback) {
+            errorCallback({
+              message: "Error submitting form: " + submitError.message,
+            });
+          }
           return;
         }
 
-        console.log('File terdeteksi:', file.name, 'Size:', (file.size / 1024).toFixed(2), 'KB');
-
-        // Convert file to base64
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          try {
-            const base64String = e.target.result;
-            console.log('File read as base64, total length:', base64String.length);
-
-            // Remove data:type;base64, prefix
-            const base64Data = base64String.split(',')[1];
-            if (!base64Data) {
-              throw new Error('Gagal memproses file base64');
+        // Set timeout fallback (jika iframe tidak load dalam 15 detik)
+        setTimeout(() => {
+          if (!loadTriggered) {
+            console.log(
+              "Timeout: Anggap sukses setelah 15 detik (file mungkin sudah terkirim)",
+            );
+            console.log(
+              "Silakan cek spreadsheet dan Google Drive untuk konfirmasi",
+            );
+            if (successCallback) {
+              successCallback({
+                success: true,
+                message:
+                  "Data dan file berhasil dikirim! (Silakan cek spreadsheet dan Google Drive untuk konfirmasi)",
+              });
             }
+            loadTriggered = true;
 
-            console.log('Base64 data length (after split):', base64Data.length);
-            console.log('File name:', file.name);
-            console.log('File type:', file.type);
+            // Cleanup
+            setTimeout(() => {
+              if (form.parentNode) {
+                form.parentNode.removeChild(form);
+              }
+              if (iframe.parentNode) {
+                iframe.parentNode.removeChild(iframe);
+              }
+            }, 1000);
+          }
+        }, 15000);
+      }
 
-            formData.fileName = file.name;
-            formData.fileType = file.type || 'application/octet-stream';
-            formData.fileData = base64Data;
+      /**
+       * Fungsi untuk menangani submit formulir
+       */
+      function handleSubmit(event) {
+        event.preventDefault();
+        console.log("Form submitted");
 
-            console.log('Data yang akan dikirim:', formData);
-            console.log('File akan dikirim:', formData.fileName, 'Size:', (formData.fileData.length / 1024).toFixed(2) + ' KB');
+        // Validasi form
+        if (!validateForm()) {
+          console.log("Validasi gagal");
+          return;
+        }
 
-            // Kirim data dengan file
-            submitFormData(formData);
-          } catch (readError) {
-            console.error('Error processing file:', readError);
-            showNotification('Error memproses file: ' + readError.message, 'error');
+        // Ambil data dari form
+        const formData = {
+          jenisSurat: document.getElementById("jenisSurat").value,
+          nomorSurat: document.getElementById("nomorSurat").value.trim(),
+          tanggalSurat: document.getElementById("tanggalSurat").value,
+          tanggalTerimaKirim:
+            document.getElementById("tanggalTerimaKirim").value || null,
+          asalTujuan: document.getElementById("asalTujuan").value.trim(),
+          perihal: document.getElementById("perihal").value.trim(),
+          keterangan: document.getElementById("keterangan").value.trim(),
+        };
+
+        // Handle file upload jika ada
+        const fileInput = document.getElementById("fileUpload");
+        if (fileInput.files && fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+
+          // Validasi ukuran file (max 2MB untuk menghindari masalah URL panjang)
+          // Base64 akan membuat file ~33% lebih besar, jadi 2MB file = ~2.7MB base64
+          const maxSize = 2 * 1024 * 1024; // 2MB
+          if (file.size > maxSize) {
+            showNotification(
+              "File terlalu besar. Maksimal 2MB untuk menghindari masalah pengiriman.",
+              "error",
+            );
             showLoading(false);
+            return;
           }
-        };
-        reader.onerror = function (error) {
-          console.error('FileReader error:', error);
-          showNotification('Error membaca file.', 'error');
-          showLoading(false);
-        };
-        reader.readAsDataURL(file);
-        return; // Keluar dari fungsi, submitFormData akan dipanggil dari reader.onload
+
+          console.log(
+            "File terdeteksi:",
+            file.name,
+            "Size:",
+            (file.size / 1024).toFixed(2),
+            "KB",
+          );
+
+          // Convert file to base64
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            try {
+              const base64String = e.target.result;
+              console.log(
+                "File read as base64, total length:",
+                base64String.length,
+              );
+
+              // Remove data:type;base64, prefix
+              const base64Data = base64String.split(",")[1];
+              if (!base64Data) {
+                throw new Error("Gagal memproses file base64");
+              }
+
+              console.log(
+                "Base64 data length (after split):",
+                base64Data.length,
+              );
+              console.log("File name:", file.name);
+              console.log("File type:", file.type);
+
+              formData.fileName = file.name;
+              formData.fileType = file.type || "application/octet-stream";
+              formData.fileData = base64Data;
+
+              console.log("Data yang akan dikirim:", formData);
+              console.log(
+                "File akan dikirim:",
+                formData.fileName,
+                "Size:",
+                (formData.fileData.length / 1024).toFixed(2) + " KB",
+              );
+
+              // Kirim data dengan file
+              submitFormData(formData);
+            } catch (readError) {
+              console.error("Error processing file:", readError);
+              showNotification(
+                "Error memproses file: " + readError.message,
+                "error",
+              );
+              showLoading(false);
+            }
+          };
+          reader.onerror = function (error) {
+            console.error("FileReader error:", error);
+            showNotification("Error membaca file.", "error");
+            showLoading(false);
+          };
+          reader.readAsDataURL(file);
+          return; // Keluar dari fungsi, submitFormData akan dipanggil dari reader.onload
+        }
+
+        // Jika tidak ada file, langsung kirim data
+        console.log("Data yang akan dikirim:", formData);
+        submitFormData(formData);
       }
 
-      // Jika tidak ada file, langsung kirim data
-      console.log('Data yang akan dikirim:', formData);
-      submitFormData(formData);
-    }
-
-    /**
-     * Fungsi untuk mengirim data form (dipisah untuk handle async file reading)
-     */
-    function submitFormData(formData) {
-      if (DATA_SUBMIT_MODE === 'url') {
-        // Mengirim data via HTTP POST ke URL Google Apps Script
-        console.log('Menggunakan metode URL untuk mengirim data');
-        sendDataViaURL(
-          formData,
-          onSuccess,
-          onError
-        );
-      } else if (DATA_SUBMIT_MODE === 'script' && typeof google !== 'undefined' && google.script && google.script.run) {
-        // Menggunakan google.script.run (hanya bekerja di Google Apps Script environment)
-        console.log('Menggunakan metode google.script.run untuk mengirim data');
-        try {
+      /**
+       * Fungsi untuk mengirim data form (dipisah untuk handle async file reading)
+       */
+      function submitFormData(formData) {
+        if (DATA_SUBMIT_MODE === "url") {
+          // Mengirim data via HTTP POST ke URL Google Apps Script
+          console.log("Menggunakan metode URL untuk mengirim data");
+          sendDataViaURL(formData, onSuccess, onError);
+        } else if (
+          DATA_SUBMIT_MODE === "script" &&
+          typeof google !== "undefined" &&
+          google.script &&
           google.script.run
-            .withSuccessHandler(onSuccess)
-            .withFailureHandler(onError)
-            .saveData(formData);
-          console.log('Data berhasil dikirim ke server');
-        } catch (error) {
-          console.error('Error saat mengirim data:', error);
-          showLoading(false);
-          showNotification('Error: ' + error.message, 'error');
-        }
-      } else {
-        // Fallback: coba gunakan URL jika script tidak tersedia
-        console.log('google.script.run tidak tersedia, menggunakan metode URL');
-        sendDataViaURL(
-          formData,
-          onSuccess,
-          onError
-        );
-      }
-    }
-
-    /**
-     * Fungsi validasi form
-     */
-    function validateForm() {
-      let isValid = true;
-
-      // Reset error messages
-      document.querySelectorAll('.error-message').forEach(el => {
-        el.textContent = '';
-      });
-
-      // Validasi Jenis Surat
-      const jenisSurat = document.getElementById('jenisSurat').value;
-      if (!jenisSurat) {
-        showError('jenisSuratError', 'Jenis surat harus dipilih');
-        isValid = false;
-      }
-
-      // Validasi Nomor Surat
-      const nomorSurat = document.getElementById('nomorSurat').value.trim();
-      if (!nomorSurat) {
-        showError('nomorSuratError', 'Nomor surat harus diisi');
-        isValid = false;
-      }
-
-      // Validasi Tanggal Surat
-      const tanggalSurat = document.getElementById('tanggalSurat').value;
-      if (!tanggalSurat) {
-        showError('tanggalSuratError', 'Tanggal surat harus diisi');
-        isValid = false;
-      }
-
-      return isValid;
-    }
-
-    /**
-     * Fungsi untuk menampilkan error
-     */
-    function showError(elementId, message) {
-      const errorElement = document.getElementById(elementId);
-      if (errorElement) {
-        errorElement.textContent = message;
-      }
-    }
-
-    /**
-     * Callback ketika data berhasil disimpan
-     */
-    function onSuccess(result) {
-      console.log('onSuccess dipanggil dengan result:', result);
-      showLoading(false);
-
-      if (result && result.success) {
-        showNotification(result.message, 'success');
-        resetForm();
-      } else {
-        const errorMsg = result && result.message ? result.message : 'Data gagal disimpan';
-        showNotification(errorMsg, 'error');
-      }
-    }
-
-    /**
-     * Callback ketika terjadi error
-     */
-    function onError(error) {
-      console.error('onError dipanggil dengan error:', error);
-      showLoading(false);
-
-      let errorMessage = 'Terjadi kesalahan yang tidak diketahui';
-      if (error) {
-        if (error.message) {
-          errorMessage = error.message;
-        } else if (typeof error === 'string') {
-          errorMessage = error;
-        } else {
-          errorMessage = JSON.stringify(error);
-        }
-      }
-
-      showNotification('Terjadi kesalahan: ' + errorMessage, 'error');
-    }
-
-    /**
-     * Fungsi untuk menampilkan/menyembunyikan loading
-     */
-    function showLoading(show) {
-      const submitBtn = document.getElementById('submitBtn');
-      const submitText = document.getElementById('submitText');
-      const submitLoader = document.getElementById('submitLoader');
-
-      if (show) {
-        submitBtn.disabled = true;
-        submitText.style.display = 'none';
-        submitLoader.style.display = 'inline-block';
-      } else {
-        submitBtn.disabled = false;
-        submitText.style.display = 'inline';
-        submitLoader.style.display = 'none';
-      }
-    }
-
-    /**
-     * Fungsi untuk menampilkan notifikasi
-     */
-    function showNotification(message, type) {
-      const notification = document.getElementById('notification');
-      notification.textContent = message;
-      notification.className = 'notification ' + type;
-      notification.style.display = 'block';
-
-      // Sembunyikan notifikasi setelah 5 detik
-      setTimeout(() => {
-        notification.style.display = 'none';
-      }, 5000);
-    }
-
-    /**
-     * Fungsi untuk reset form
-     */
-    function resetForm() {
-      document.getElementById('suratForm').reset();
-      document.querySelectorAll('.error-message').forEach(el => {
-        el.textContent = '';
-      });
-    }
-
-    // Update label dinamis berdasarkan jenis surat
-    document.getElementById('jenisSurat').addEventListener('change', function () {
-      const jenisSurat = this.value;
-      const asalTujuanLabel = document.querySelector('label[for="asalTujuan"]');
-      const tanggalLabel = document.querySelector('label[for="tanggalTerimaKirim"]');
-
-      if (jenisSurat === 'Masuk') {
-        asalTujuanLabel.textContent = 'Asal Surat';
-        tanggalLabel.textContent = 'Tanggal Terima';
-      } else if (jenisSurat === 'Keluar') {
-        asalTujuanLabel.textContent = 'Tujuan Surat';
-        tanggalLabel.textContent = 'Tanggal Kirim';
-      } else {
-        asalTujuanLabel.textContent = 'Asal/Tujuan Surat';
-        tanggalLabel.textContent = 'Tanggal Terima/Kirim';
-      }
-    });
-
-    // ================= ACCESS MODAL (simple client-side protection) =================
-    (function () {
-      const ACCESS_CODE = '20519260'; // NOTE: client-side only (visible in source)
-      const modal = document.getElementById('accessModal');
-      const input = document.getElementById('accessCodeInput');
-      const submitBtn = document.getElementById('accessSubmit');
-      const err = document.getElementById('accessError');
-
-      function showModal(show) {
-        if (!modal) return;
-        modal.setAttribute('aria-hidden', show ? 'false' : 'true');
-        if (show) {
-          modal.classList.add('show');
-          input && input.focus();
-          // prevent scrolling behind modal
-          document.body.style.overflow = 'hidden';
-        } else {
-          modal.classList.remove('show');
-          document.body.style.overflow = '';
-        }
-      }
-
-      function unlock() {
-        // Do not persist unlock across page reloads — modal will reappear on refresh
-        err.style.display = 'none';
-        showModal(false);
-      }
-
-      function trySubmit() {
-        const val = (input && input.value || '').trim();
-        if (val === ACCESS_CODE) {
-          unlock();
-        } else {
-          if (err) {
-            err.style.display = 'block';
+        ) {
+          // Menggunakan google.script.run (hanya bekerja di Google Apps Script environment)
+          console.log(
+            "Menggunakan metode google.script.run untuk mengirim data",
+          );
+          try {
+            google.script.run
+              .withSuccessHandler(onSuccess)
+              .withFailureHandler(onError)
+              .saveData(formData);
+            console.log("Data berhasil dikirim ke server");
+          } catch (error) {
+            console.error("Error saat mengirim data:", error);
+            showLoading(false);
+            showNotification("Error: " + error.message, "error");
           }
-          input.value = '';
-          input.focus();
+        } else {
+          // Fallback: coba gunakan URL jika script tidak tersedia
+          console.log(
+            "google.script.run tidak tersedia, menggunakan metode URL",
+          );
+          sendDataViaURL(formData, onSuccess, onError);
         }
       }
 
-      document.addEventListener('DOMContentLoaded', () => {
-        // Always show modal on load (including after refresh)
-        showModal(true);
+      /**
+       * Fungsi validasi form
+       */
+      function validateForm() {
+        let isValid = true;
 
-        if (submitBtn) submitBtn.addEventListener('click', trySubmit);
-        if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') trySubmit(); });
-      });
-    })();
+        // Reset error messages
+        document.querySelectorAll(".error-message").forEach((el) => {
+          el.textContent = "";
+        });
 
-    // PWA
-    if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(reg => console.log('Service Worker terdaftar:', reg.scope))
-        .catch(err => console.error('Service Worker gagal:', err));
-    });
-  }
+        // Validasi Jenis Surat
+        const jenisSurat = document.getElementById("jenisSurat").value;
+        if (!jenisSurat) {
+          showError("jenisSuratError", "Jenis surat harus dipilih");
+          isValid = false;
+        }
 
-    //daftar kode surat
-    function toggleInfo() {
-  const content = document.getElementById('infoContent');
-  const arrow = document.getElementById('infoArrow');
+        // Validasi Nomor Surat
+        const nomorSurat = document.getElementById("nomorSurat").value.trim();
+        if (!nomorSurat) {
+          showError("nomorSuratError", "Nomor surat harus diisi");
+          isValid = false;
+        }
 
-  if (content.style.display === 'block') {
-    content.style.display = 'none';
-    arrow.textContent = '▼';
-  } else {
-    content.style.display = 'block';
-    arrow.textContent = '▲';
-  }
-}
-  </script>
-</body>
+        // Validasi Tanggal Surat
+        const tanggalSurat = document.getElementById("tanggalSurat").value;
+        if (!tanggalSurat) {
+          showError("tanggalSuratError", "Tanggal surat harus diisi");
+          isValid = false;
+        }
 
+        return isValid;
+      }
+
+      /**
+       * Fungsi untuk menampilkan error
+       */
+      function showError(elementId, message) {
+        const errorElement = document.getElementById(elementId);
+        if (errorElement) {
+          errorElement.textContent = message;
+        }
+      }
+
+      /**
+       * Callback ketika data berhasil disimpan
+       */
+      function onSuccess(result) {
+        console.log("onSuccess dipanggil dengan result:", result);
+        showLoading(false);
+
+        if (result && result.success) {
+          showNotification(result.message, "success");
+          resetForm();
+        } else {
+          const errorMsg =
+            result && result.message ? result.message : "Data gagal disimpan";
+          showNotification(errorMsg, "error");
+        }
+      }
+
+      /**
+       * Callback ketika terjadi error
+       */
+      function onError(error) {
+        console.error("onError dipanggil dengan error:", error);
+        showLoading(false);
+
+        let errorMessage = "Terjadi kesalahan yang tidak diketahui";
+        if (error) {
+          if (error.message) {
+            errorMessage = error.message;
+          } else if (typeof error === "string") {
+            errorMessage = error;
+          } else {
+            errorMessage = JSON.stringify(error);
+          }
+        }
+
+        showNotification("Terjadi kesalahan: " + errorMessage, "error");
+      }
+
+      /**
+       * Fungsi untuk menampilkan/menyembunyikan loading
+       */
+      function showLoading(show) {
+        const submitBtn = document.getElementById("submitBtn");
+        const submitText = document.getElementById("submitText");
+        const submitLoader = document.getElementById("submitLoader");
+
+        if (show) {
+          submitBtn.disabled = true;
+          submitText.style.display = "none";
+          submitLoader.style.display = "inline-block";
+        } else {
+          submitBtn.disabled = false;
+          submitText.style.display = "inline";
+          submitLoader.style.display = "none";
+        }
+      }
+
+      /**
+       * Fungsi untuk menampilkan notifikasi
+       */
+      function showNotification(message, type) {
+        const notification = document.getElementById("notification");
+        notification.textContent = message;
+        notification.className = "notification " + type;
+        notification.style.display = "block";
+
+        // Sembunyikan notifikasi setelah 5 detik
+        setTimeout(() => {
+          notification.style.display = "none";
+        }, 5000);
+      }
+
+      /**
+       * Fungsi untuk reset form
+       */
+      function resetForm() {
+        document.getElementById("suratForm").reset();
+        document.querySelectorAll(".error-message").forEach((el) => {
+          el.textContent = "";
+        });
+      }
+
+      // Update label dinamis berdasarkan jenis surat
+      document
+        .getElementById("jenisSurat")
+        .addEventListener("change", function () {
+          const jenisSurat = this.value;
+          const asalTujuanLabel = document.querySelector(
+            'label[for="asalTujuan"]',
+          );
+          const tanggalLabel = document.querySelector(
+            'label[for="tanggalTerimaKirim"]',
+          );
+
+          if (jenisSurat === "Masuk") {
+            asalTujuanLabel.textContent = "Asal Surat";
+            tanggalLabel.textContent = "Tanggal Terima";
+          } else if (jenisSurat === "Keluar") {
+            asalTujuanLabel.textContent = "Tujuan Surat";
+            tanggalLabel.textContent = "Tanggal Kirim";
+          } else {
+            asalTujuanLabel.textContent = "Asal/Tujuan Surat";
+            tanggalLabel.textContent = "Tanggal Terima/Kirim";
+          }
+        });
+
+      // ================= ACCESS MODAL (simple client-side protection) =================
+      (function () {
+        const ACCESS_CODE = "20519260"; // NOTE: client-side only (visible in source)
+        const modal = document.getElementById("accessModal");
+        const input = document.getElementById("accessCodeInput");
+        const submitBtn = document.getElementById("accessSubmit");
+        const err = document.getElementById("accessError");
+
+        function showModal(show) {
+          if (!modal) return;
+          modal.setAttribute("aria-hidden", show ? "false" : "true");
+          if (show) {
+            modal.classList.add("show");
+            input && input.focus();
+            // prevent scrolling behind modal
+            document.body.style.overflow = "hidden";
+          } else {
+            modal.classList.remove("show");
+            document.body.style.overflow = "";
+          }
+        }
+
+        function unlock() {
+          // Do not persist unlock across page reloads — modal will reappear on refresh
+          err.style.display = "none";
+          showModal(false);
+        }
+
+        function trySubmit() {
+          const val = ((input && input.value) || "").trim();
+          if (val === ACCESS_CODE) {
+            unlock();
+          } else {
+            if (err) {
+              err.style.display = "block";
+            }
+            input.value = "";
+            input.focus();
+          }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          // Always show modal on load (including after refresh)
+          showModal(true);
+
+          if (submitBtn) submitBtn.addEventListener("click", trySubmit);
+          if (input)
+            input.addEventListener("keydown", (e) => {
+              if (e.key === "Enter") trySubmit();
+            });
+        });
+      })();
+
+      // PWA
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker
+            .register("service-worker.js")
+            .then((reg) => console.log("Service Worker terdaftar:", reg.scope))
+            .catch((err) => console.error("Service Worker gagal:", err));
+        });
+      }
+
+      //daftar kode surat
+      function toggleInfo() {
+        const content = document.getElementById("infoContent");
+        const arrow = document.getElementById("infoArrow");
+
+        if (content.style.display === "block") {
+          content.style.display = "none";
+          arrow.textContent = "▼";
+        } else {
+          content.style.display = "block";
+          arrow.textContent = "▲";
+        }
+      }
+    </script>
+  </body>
 </html>
