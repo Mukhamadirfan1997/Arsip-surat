@@ -420,6 +420,71 @@
       color: #ea4335;
       font-weight: 600;
     }
+    
+    /* Info Kode Surat */
+.info-box {
+  margin-bottom: 24px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8f9fa;
+}
+
+.info-toggle {
+  width: 100%;
+  background: #4285f4;
+  color: white;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-toggle:hover {
+  background: #3367d6;
+}
+
+.info-content {
+  display: none;
+  padding: 16px;
+  font-size: 13px;
+  color: #444;
+}
+
+.info-content h4 {
+  margin-top: 12px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.info-content ul {
+  padding-left: 18px;
+  margin-bottom: 10px;
+}
+
+.info-content li {
+  margin-bottom: 4px;
+}
+
+.example-box {
+  background: white;
+  border: 1px dashed #bbb;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.example-box code {
+  display: block;
+  background: #f1f3f4;
+  padding: 6px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
 
   </style>
 </head>
@@ -458,6 +523,50 @@
     </div>
 
     <main>
+      <!-- Informasi Kode Surat -->
+<div class="info-box">
+  <button type="button" class="info-toggle" onclick="toggleInfo()">
+    📘 Informasi Kode Surat
+    <span id="infoArrow">▼</span>
+  </button>
+
+  <div id="infoContent" class="info-content">
+    <h4>Kode Utama (Administrasi Pendidikan)</h4>
+    <ul>
+      <li><strong>420</strong> : Pendidikan secara umum</li>
+      <li><strong>421</strong> : Sekolah / Pendidikan</li>
+      <li><strong>421.2</strong> : Pendidikan Dasar</li>
+      <li><strong>421.3</strong> : Pendidikan Menengah</li>
+      <li><strong>421.5</strong> : Sekolah Kejuruan</li>
+      <li><strong>421.6</strong> : Kegiatan Sekolah</li>
+      <li><strong>422</strong> : Administrasi Sekolah / SPP</li>
+    </ul>
+
+    <h4>Kode Jenis Surat</h4>
+    <ul>
+      <li><strong>01</strong> : Surat Keputusan (SK)</li>
+      <li><strong>02</strong> : Surat Undangan (SU)</li>
+      <li><strong>03</strong> : Surat Permohonan (SPm)</li>
+      <li><strong>04</strong> : Surat Pemberitahuan (SPb)</li>
+      <li><strong>05</strong> : Surat Peminjaman (SPp)</li>
+      <li><strong>08</strong> : Surat Tugas (ST)</li>
+    </ul>
+
+    <h4>Contoh Struktur Nomor Surat</h4>
+    <div class="example-box">
+      <code>421.3 / 005 / 424.053 / 2026</code>
+      <p>
+        <strong>421.3</strong> = Kode Surat<br>
+        <strong>005</strong> = Nomor Urut<br>
+        <strong>424.053</strong> = Kode Sekolah<br>
+        <strong>2026</strong> = Tahun
+      </p>
+    </div>
+  </div>
+</div>
+
+
+      
       <form id="suratForm" onsubmit="return handleSubmit(event)">
         <!-- Jenis Surat -->
         <div class="form-group">
@@ -1252,6 +1361,20 @@
         .catch(err => console.error('Service Worker gagal:', err));
     });
   }
+
+    //daftar kode surat
+    function toggleInfo() {
+  const content = document.getElementById('infoContent');
+  const arrow = document.getElementById('infoArrow');
+
+  if (content.style.display === 'block') {
+    content.style.display = 'none';
+    arrow.textContent = '▼';
+  } else {
+    content.style.display = 'block';
+    arrow.textContent = '▲';
+  }
+}
   </script>
 </body>
 
